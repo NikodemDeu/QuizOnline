@@ -1,0 +1,42 @@
+﻿@model QuizOnline.Models.Quiz
+
+@{
+    ViewData["Title"] = "Edytuj Quiz";
+}
+
+<h1>Edytuj Quiz</h1>
+
+<h4>@Model.Title</h4>
+<hr />
+<div class="row">
+    <div class="col-md-6">
+        <form asp-action="Edit">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <input type="hidden" asp-for="Id" />
+            <input type="hidden" asp-for="UserId" /> @* Ukrywamy UserId, ale musi być przesłane z formularzem *@
+
+            <div class="form-group mb-3">
+                <label asp-for="Title" class="control-label">Tytuł</label>
+                <input asp-for="Title" class="form-control" />
+                <span asp-for="Title" class="text-danger"></span>
+            </div>
+
+            <div class="form-group mb-3">
+                <label asp-for="Description" class="control-label">Opis</label>
+                <input asp-for="Description" class="form-control" />
+                <span asp-for="Description" class="text-danger"></span>
+            </div>
+
+            <div class="form-group">
+                <input type="submit" value="Zapisz" class="btn btn-primary" />
+                <a asp-action="Index" class="btn btn-secondary">Anuluj</a>
+            </div>
+        </form>
+    </div>
+</div>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}

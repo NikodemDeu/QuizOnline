@@ -1,0 +1,43 @@
+﻿@model IEnumerable<QuizOnline.Models.QuizAttempt>
+
+@{
+    ViewData["Title"] = "Moje Wyniki";
+}
+
+<h1>Moje Wyniki</h1>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                Tytuł Quizu
+            </th>
+            <th>
+                Data Zakończenia
+            </th>
+            <th>
+                Wynik
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Quiz.Title)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.EndTime)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Score)%
+                </td>
+                <td class="text-end">
+                    <a asp-action="AttemptDetails" asp-route-id="@item.Id" class="btn btn-sm btn-info">Szczegóły</a>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>

@@ -1,0 +1,80 @@
+﻿@model QuizOnline.ViewModels.AttemptDetailsViewModel
+
+@{
+    ViewData["Title"] = "Szczegóły wyniku";
+}
+
+<h1>Szczegóły podejścia do quizu: @Model.Attempt.Quiz.Title</h1>
+
+<div>
+    <h4>Wynik końcowy: @Model.Attempt.Score%</h4>
+
+    <p class="lead">
+        (Zdobyto @Model.UserPoints z @Model.MaxPossiblePoints punktów)
+    </p>
+
+    <hr />
+    <dl class="row">
+        <dt class="col-sm-2">
+            Tytuł Quizu
+        </dt>
+        <dd class="col-sm-10">
+            @Model.Attempt.Quiz.Title
+        </dd>
+        <dt class="col-sm-2">
+            Data
+        </dt>
+        <dd class="col-sm-10">
+            @Model.Attempt.EndTime
+        </dd>
+    </dl>
+</div>
+<hr />
+
+<h3>Twoje odpowiedzi:</h3>
+
+@foreach (var question in Model.Attempt.Quiz.Questions.OrderBy(q => q.Id))
+{
+    var userAnswer = Model.Attempt.AttemptAnswers.FirstOrDefault(a => a.SelectedAnswer.QuestionId == question.Id);
+    var isUserAnswerCorrect = userAnswer != null && userAnswer.SelectedAnswer.IsCorrect;
+    var userPointsForQuestion = isUserAnswerCorrect ? question.Points : 0;
+
+    var cardHeaderClass = isUserAnswerCorrect ? "bg-success-subtle" : (userAnswer != null ? "bg-danger-subtle" : "bg-warning-subtle");
+
+    <div class="card mb-3">
+        <div class="card-header @cardHeaderClass d-flex justify-content-between">
+            <strong>Pytanie: @question.Text</strong>
+            <strong>Zdobyte punkty: @userPointsForQuestion / @question.Points</strong>
+        </div>
+        <ul class="list-group list-group-flush">
+            @if (userAnswer != null)
+            {
+                
+                var userAnswerClass = isUserAnswerCorrect ? "list-group-item-success" : "list-group-item-danger";
+                <li class="list-group-item @userAnswerClass">
+                    Twoja odpowiedź: @userAnswer.SelectedAnswer.Text
+                </li>
+
+                @if (!isUserAnswerCorrect)
+                {
+                    var correctAnswer = question.Answers.FirstOrDefault(a => a.IsCorrect);
+                    if (correctAnswer != null)
+                    {
+                        <li class="list-group-item list-group-item-info">
+                            Poprawna odpowiedź: @correctAnswer.Text
+                        </li>
+                    }
+                }
+            }
+            else
+            {
+                <li class="list-group-item list-group-item-warning">
+                    Brak odpowiedzi na to pytanie.
+                </li>
+            }
+        </ul>
+    </div>
+}
+<div>
+    <a asp-action="Index">Powrót do listy wyników</a>
+</div>

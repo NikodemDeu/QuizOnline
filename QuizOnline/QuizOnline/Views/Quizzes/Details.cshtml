@@ -1,0 +1,109 @@
+﻿@model QuizOnline.ViewModels.QuizDetailsViewModel
+
+@{
+    ViewData["Title"] = "Zarządzanie Quizem";
+}
+
+<h1>Zarządzaj quizem: @Model.Quiz.Title</h1>
+<p class="text-muted">@Model.Quiz.Description</p>
+<hr />
+
+<h4>Statystyki ogólne</h4>
+<div class="row mb-4">
+    <div class="col-md-6">
+        <div class="card">
+            <div class="card-body text-center">
+                <h5 class="card-title">Liczba Podejść</h5>
+                <p class="card-text display-4">@Model.TotalParticipants</p>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-6">
+        <div class="card">
+            <div class="card-body text-center">
+                <h5 class="card-title">Średni Wynik</h5>
+                <p class="card-text display-4">@Model.AverageScore.ToString("F1")%</p>
+            </div>
+        </div>
+    </div>
+</div>
+<hr />
+
+<h3>Pytania w quizie (ze statystykami):</h3>
+
+@if (Model.Quiz.Questions.Any())
+{
+    <ol class="list-group list-group-numbered">
+        @foreach (var question in Model.Quiz.Questions)
+        {
+            <li class="list-group-item">
+                <div class="fw-bold">@question.Text (@question.Points pkt.)</div>
+
+                @{
+                    Model.QuestionTotalAnswers.TryGetValue(question.Id, out var totalForQuestion);
+                }
+
+                <ul class="list-unstyled mt-2">
+                    @foreach (var answer in question.Answers)
+                    {
+                        Model.AnswerSelectionStats.TryGetValue(answer.Id, out var selectionCount);
+                        var percentage = (totalForQuestion > 0) ? ((double)selectionCount / totalForQuestion) * 100 : 0;
+                        string style = answer.IsCorrect ? "color: green; font-weight: bold;" : "";
+                        string correctLabel = answer.IsCorrect ? "(Poprawna)" : "";
+
+                        <li style="@style">
+                            @answer.Text @correctLabel
+                            <small class="text-muted ms-2">
+                                - Wybrano @selectionCount razy (@percentage.ToString("F0")%)
+                            </small>
+                        </li>
+                    }
+                </ul>
+
+                <form asp-action="AddAnswer" method="post" class="ms-4 mt-2">
+                    <input type="hidden" name="QuestionId" value="@question.Id" />
+                    <div class="input-group input-group-sm">
+                        <input name="Text" class="form-control" placeholder="Dodaj nową odpowiedź..." />
+                        <div class="input-group-text">
+                            <label class="form-check-label me-2">Poprawna?</label>
+                            <input name="IsCorrect" type="checkbox" value="true" class="form-check-input mt-0" />
+                        </div>
+                        <button type="submit" class="btn btn-outline-secondary">Dodaj</button>
+                    </div>
+                </form>
+            </li>
+        }
+    </ol>
+}
+else
+{
+    <p>Ten quiz nie ma jeszcze żadnych pytań.</p>
+}
+
+<hr />
+
+<h4>Dodaj nowe pytanie</h4>
+<form asp-action="AddQuestion" method="post">
+    <input type="hidden" name="QuizId" value="@Model.Quiz.Id" />
+    <div class="row">
+        <div class="col-md-9">
+            <div class="form-group">
+                <label for="Text" class="control-label">Treść pytania</label>
+                <input name="Text" class="form-control" />
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="form-group">
+                <label for="Points" class="control-label">Punkty</label>
+                <input name="Points" type="number" value="1" class="form-control" />
+            </div>
+        </div>
+    </div>
+    <div class="form-group mt-2">
+        <input type="submit" value="Dodaj pytanie" class="btn btn-primary" />
+    </div>
+</form>
+
+<div class="mt-4">
+    <a asp-action="Index" class="btn btn-secondary">Powrót do listy quizów</a>
+</div>
