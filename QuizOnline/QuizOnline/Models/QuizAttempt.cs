@@ -1,7 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
-// Jeśli używasz ASP.NET Core Identity, dodaj ten using
-// using Microsoft.AspNetCore.Identity; 
+
 
 namespace QuizOnline.Models;
 

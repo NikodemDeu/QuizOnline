@@ -3,7 +3,7 @@ using QuizOnline.Models;
 
 namespace QuizOnline.Models;
 
-public class Quiz // Nazwa klasy jest OK
+public class Quiz 
 {
     [Key]
     public int Id { get; set; }
